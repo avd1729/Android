@@ -10,14 +10,16 @@ import androidx.lifecycle.ViewModelProvider
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val dbHelper = DatabaseHelper(this)
+
+        val contentResolver = contentResolver // Use ContentResolver for operations
         val viewModel: ItemViewModel by viewModels {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return ItemViewModel(dbHelper) as T
+                    return ItemViewModel(contentResolver) as T
                 }
             }
         }
+
         setContent {
             ItemScreen(viewModel)
         }

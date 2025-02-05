@@ -25,11 +25,21 @@
         </activity>
 
         <provider
-            android:name=".StudentProvider"
+            android:name=".provider.StudentProvider"
             android:authorities="com.example.crudapp.provider"
-            android:exported="true" />
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.READ_EXTERNAL_STORAGE"
+            android:readPermission="com.example.crudapp.READ_PROVIDER"
+            android:writePermission="com.example.crudapp.WRITE_PROVIDER"
+            android:grantUriPermissions="true" />
+
+
 
     </application>
+
+    <permission android:name="com.example.crudapp.READ_PROVIDER"/>
+    <permission android:name="com.example.crudapp.WRITE_PROVIDER"/>
 
 
 </manifest>

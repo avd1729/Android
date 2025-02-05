@@ -1,9 +1,7 @@
 package com.example.crudapp
 
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.compose.foundation.layout.*
@@ -76,53 +74,32 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "students.db"
 
 }
 
-class ItemViewModel(private val contentResolver: ContentResolver) : ViewModel() {
+class ItemViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
     var items by mutableStateOf(listOf<String>())
         private set
 
     init { fetchItems() }
 
     fun fetchItems() {
-        val cursor: Cursor? = contentResolver.query(StudentProvider.CONTENT_URI, arrayOf("name"), null, null, null)
-        val itemList = mutableListOf<String>()
-        cursor?.use {
-            while (it.moveToNext()) {
-                itemList.add(it.getString(0))
-            }
-        }
-        items = itemList
+        items = dbHelper.getAllItems()
     }
 
     fun addItem(name: String, course: String, grade: String, email: String, phone: String) {
-        val values = ContentValues().apply {
-            put("name", name)
-            put("course", course)
-            put("grade", grade)
-            put("email", email)
-            put("phone", phone)
-        }
-        contentResolver.insert(StudentProvider.CONTENT_URI, values)
+        dbHelper.insertItem(name, course, grade, email, phone)
         fetchItems()
     }
 
     fun removeItem(name: String) {
-        contentResolver.delete(StudentProvider.CONTENT_URI, "name=?", arrayOf(name))
+        dbHelper.deleteItem(name)
         fetchItems()
     }
 
     fun updateItem(oldPhone: String, name: String, course: String, grade: String, email: String, phone: String) {
-        val values = ContentValues().apply {
-            put("name", name)
-            put("course", course)
-            put("grade", grade)
-            put("email", email)
-            put("phone", phone)
-        }
-        contentResolver.update(StudentProvider.CONTENT_URI, values, "phone=?", arrayOf(oldPhone))
-        fetchItems()
+        dbHelper.updateItem(oldPhone, name, course, grade, email, phone)
+        fetchItems() // Refresh UI
     }
-}
 
+}
 
 @Composable
 fun ItemScreen(viewModel: ItemViewModel) {
@@ -211,3 +188,15 @@ fun ItemScreen(viewModel: ItemViewModel) {
     }
 }
 
+
+@Preview
+@Composable
+fun PreviewItemScreen() {
+    val context = LocalContext.current
+    val viewModel: ItemViewModel = viewModel(factory = object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return ItemViewModel(DatabaseHelper(context)) as T
+        }
+    })
+    ItemScreen(viewModel)
+}

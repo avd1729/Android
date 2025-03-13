@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.example.location_aware_app"
+    namespace = "com.example.sensormonitor"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.location_aware_app"
+        applicationId = "com.example.sensormonitor"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -37,10 +37,13 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
+    }
 }
 
 dependencies {
-
+    // AndroidX and Compose dependencies
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -49,7 +52,13 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.play.services.location)
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    // MPAndroidChart for visualization
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // Optional: Add this if you want to use charts in Compose
+    implementation("com.github.tehras:charts:0.2.4-alpha")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,6 +66,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.google.accompanist:accompanist-permissions:0.37.0")
-    implementation("com.google.android.catalog.framework:casa-annotations:0.5.1")
 }
